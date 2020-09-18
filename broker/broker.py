@@ -1,6 +1,6 @@
-#!/usr/bin/env python
 import pika
 import uuid
+import json
 
 class RpcClient(object):
 
@@ -20,9 +20,9 @@ class RpcClient(object):
 
     def on_response(self, ch, method, props, body):
         if self.corr_id == props.correlation_id:
-            self.response = body
+            self.response = body.decode('ascii')
 
-    def call(self, n):
+    def call(self, data):
         self.response = None
         self.corr_id = str(uuid.uuid4())
         self.channel.basic_publish(
@@ -32,13 +32,23 @@ class RpcClient(object):
                 reply_to=self.callback_queue,
                 correlation_id=self.corr_id,
             ),
-            body=str(n))
+            body=str(data))
         while self.response is None:
             self.connection.process_data_events()
-        return int(self.response)
+        return self.response
 
 
-fibonacci_rpc = RpcClient()
-print(" [x] Requesting fib(30)")
-response = fibonacci_rpc.call(30)
-print(" [.] Got %r" % response)
+if __name__ == '__main__':
+    rpc = RpcClient()
+    print('Adding sensor...')
+    sensor = {"id": "sensor1", "max": 8, "min": 2, "type":"temp"}
+    sensor_j = json.dumps(sensor)
+    method = "POST"
+    request = method+'/'+sensor_j
+    response = rpc.call(request)
+    print('Response: '+str(response))
+    print('Reading sensor...')
+    sensor_j = json.dumps(sensor)
+    method = "GET"
+    print('Response: '+str(response))
+
