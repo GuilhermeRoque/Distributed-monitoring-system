@@ -10,19 +10,29 @@ class Station:
     def __init__(self):
         self.interval = 30
         self.sensors = []
-        self.machine_t = threading.Thread(target=self.reading_loop)
-        self.machine_t.start()
-        self.comm_t = threading.Thread(target=self.communicate)
-        self.comm_t.start()
 
-    def communicate(self):
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(host='localhost'))
-        self.channel = self.connection.channel()
-        self.channel.queue_declare(queue='rpc_queue')
-        self.channel.basic_qos(prefetch_count=1)
-        self.channel.basic_consume(queue='rpc_queue', on_message_callback=self.on_request)
-        self.channel.start_consuming()
+        channel = self.connection.channel()
+        channel.queue_declare(queue='rpc_queue')
+        channel.basic_qos(prefetch_count=1)
+        channel.basic_consume(queue='rpc_queue', on_message_callback=self.on_request)
+
+        self.broadcast_connection = pika.BlockingConnection(
+            pika.ConnectionParameters(host='localhost'))
+        self.broadcast_channel = self.broadcast_connection.channel()
+
+        self.machine_t = threading.Thread(target=self.reading_loop)
+        self.comm_t = threading.Thread(target=channel.start_consuming)
+
+    def __del__(self):
+        self.connection.close()
+
+    def run(self):
+        self.machine_t.start()
+        self.comm_t.start()
+        self.comm_t.join()
+        self.machine_t.join()
 
     def on_request(self, ch, method, props, body):
         request_type, data = (body.decode('ascii')).split('/')
@@ -40,17 +50,17 @@ class Station:
         response = ''
         if request_type == 'PUT':
             sensor_ref = self.get_sensor(sensor)
-            print(" Updating sensor" + str(sensor_ref.id))
+            print(" Updating sensor: " + str(sensor_ref.id))
             response = sensor_ref.write(sensor)
         elif request_type == 'POST':
-            print(" Adding sensor" + str(sensor.id))
+            print(" Adding sensor: " + str(sensor.id))
             self.sensors.append(sensor)
             response = sensor.active()
         elif request_type == 'DEL':
             response = True
         elif request_type == 'GET':
             sensor_ref = self.get_sensor(sensor)
-            print(" Reading sensor" + str(sensor_ref.id))
+            print("Reading sensor: " + str(sensor_ref.id))
             response = sensor_ref.read()
         return response
 
@@ -60,18 +70,21 @@ class Station:
                 return s
 
     def notify(self, sensor_id, val):
-        print("Notifying for sensor " + str(sensor_id) + " val " + str(val))
+        print("Notifying for sensor: " + str(sensor_id) + " val " + str(val))
+        message = str(sensor_id) + ":" + str(val)
+        self.broadcast_channel.basic_publish(exchange='logs', routing_key='', body=message)
 
     def reading_loop(self):
         while True:
             for sensor in self.sensors:
+                print("Looping reading sensor: ")
                 val = sensor.read()
-                if val > sensor.max:
+                print(val)
+                if val > sensor.max or val < sensor.min:
                     self.notify(sensor.id, val)
             sleep(self.interval)
 
 
 if __name__ == '__main__':
     station = Station()
-    station.comm_t.join()
-    station.machine_t.join()
+    station.run()
