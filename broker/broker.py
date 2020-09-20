@@ -5,7 +5,8 @@ import threading
 from random import randint
 from time import sleep
 
-class Broker(object):
+
+class Broker:
 
     def __init__(self):
         self.connection = pika.BlockingConnection(
@@ -79,4 +80,3 @@ class Broker(object):
 if __name__ == '__main__':
     broker = Broker()
     broker.run()
-

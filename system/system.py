@@ -2,9 +2,11 @@
 import pika
 import threading
 from time import sleep
+import sys
+sys.path.append('/home/guilherme/PycharmProjects/broker/db/')
+from sensorDAO import SensorDAO, db_conn
 from sensor import Sensor
 import json
-
 
 class Station:
     def __init__(self):
@@ -55,6 +57,9 @@ class Station:
         elif request_type == 'POST':
             print(" Adding sensor: " + str(sensor.id))
             self.sensors.append(sensor)
+            s = SensorDAO(sensor)
+            db_conn.session.add(s)
+            db_conn.session.commit()
             response = sensor.active()
         elif request_type == 'DEL':
             response = True
