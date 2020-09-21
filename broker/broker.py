@@ -7,7 +7,6 @@ from time import sleep
 
 
 class Broker:
-
     def __init__(self):
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(host='localhost'))
@@ -20,23 +19,11 @@ class Broker:
             on_message_callback=self.on_response,
             auto_ack=True)
 
-        self.broadcast_connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='localhost'))
-        broadcast_channel = self.broadcast_connection.channel()
-        broadcast_channel.exchange_declare(exchange='logs', exchange_type='fanout')
-        result = broadcast_channel.queue_declare(queue='', exclusive=True)
-        queue_name = result.method.queue
-        broadcast_channel.queue_bind(exchange='logs', queue=queue_name)
-        broadcast_channel.basic_consume(queue=queue_name, on_message_callback=self.callback, auto_ack=True)
-
-        self.notify_t = threading.Thread(target=broadcast_channel.start_consuming)
         self.rpc_t = threading.Thread(target=self.rpc_loop)
 
     def run(self):
         self.rpc_t.start()
-        self.notify_t.start()
         self.rpc_t.join()
-        self.notify_t.join()
 
     def rpc_loop(self):
         print('Adding sensor...')
@@ -57,9 +44,6 @@ class Broker:
     def on_response(self, ch, method, props, body):
         if self.corr_id == props.correlation_id:
             self.response = body.decode('ascii')
-
-    def callback(self, ch, method, props, body):
-        print("Received Notification: " + body.decode("ascii"))
 
     def call(self, data):
         self.response = None
