@@ -2,17 +2,13 @@
 import pika
 import threading
 from time import sleep
-import sys
-sys.path.append('/home/guilherme/PycharmProjects/broker/db/')
-from sensorDAO import SensorDAO, db_conn
-from sensor import Sensor
+from REST import *
 import json
 
 class Station:
     def __init__(self):
+        self.sensors = sensors_list
         self.interval = 30
-        self.sensors = []
-
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(host='localhost'))
         channel = self.connection.channel()
@@ -26,6 +22,7 @@ class Station:
 
         self.machine_t = threading.Thread(target=self.reading_loop)
         self.comm_t = threading.Thread(target=channel.start_consuming)
+        self.rest_t = threading.Thread(target=app.run)
 
     def __del__(self):
         self.connection.close()
@@ -33,13 +30,15 @@ class Station:
     def run(self):
         self.machine_t.start()
         self.comm_t.start()
+        self.rest_t.start()
         self.comm_t.join()
         self.machine_t.join()
+        self.rest_t.join()
 
     def on_request(self, ch, method, props, body):
         request_type, data = (body.decode('ascii')).split('/')
         data = json.loads(data)
-        sensor = Sensor(data['max'], data['min'], data['type'], data['id'])
+        sensor = Sensor(data)
         response = self.handle_request(request_type, sensor)
         print(response)
         ch.basic_publish(exchange='',

@@ -1,15 +1,13 @@
 import threading
-
-#from ios import IOs
-from ios import IOs_test_dht11
+from ios import IOs
 
 class Sensor:
-    def __init__(self, max, min, type, id):
+    def __init__(self, sensor_dict):
         self.io = IOs()
-        self.max = max
-        self.min = min
-        self.type = type
-        self.id = id
+        self.max = sensor_dict['max']
+        self.min = sensor_dict['min']
+        self.type = sensor_dict['type']
+        self.id = sensor_dict['id']
         self.mutex = threading.Lock()
 
     def active(self):
@@ -17,8 +15,7 @@ class Sensor:
 
     def read(self):
         self.mutex.acquire(blocking=True)
-        #val = self.io.read()
-        val = self.read_temperatura()
+        val = self.io.read()
         self.mutex.release()
         return val
 
@@ -27,3 +24,6 @@ class Sensor:
         val = self.io.write(data)
         self.mutex.release()
         return val
+
+    def __repr__(self):
+        return '<Sensor {}>'.format(self.id)
