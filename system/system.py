@@ -2,7 +2,7 @@
 import pika
 import threading
 from time import sleep
-from REST import *
+from app import *
 import json
 
 class Station:

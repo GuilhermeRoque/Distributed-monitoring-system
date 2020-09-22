@@ -73,16 +73,45 @@ def sensor():
         else:
             return '', 202
     elif request.method == 'PUT':
-        pass
+        sensor = None
+        try:
+            sensor_json = request.json
+            id = sensor_json['id']
+            sensor = get_sensor(id)
+            sensor.max = sensor_json['max']
+            sensor.min = sensor_json['min']
+            SensorDAO.query.filter_by(id=id).update({'max': sensor_json['max'], 'min': sensor_json['min']})
+            db_conn.session.commit()
+        except:
+            abort(400)
+        if sensor is None:
+            abort(404)
+        else:
+            return '', 200
     elif request.method == 'DELETE':
-        pass
+        sensor = None
+        try:
+            sensor_json = request.json
+            id = sensor_json['id']
+            sensor = get_sensor(id)
+            sensors_list.remove(sensor)
+            print('aqui')
+            SensorDAO.query.filter_by(id=id).delete()
+            print('djasoijdio')
+            db_conn.session.commit()
+        except:
+            abort(400)
+        if sensor is None:
+            abort(404)
+        else:
+            return '', 200
     else:
-        pass
+        abort(400)
 
 
 db_conn.create_all()
 sensors = SensorDAO.query.all()
 for sensor in sensors:
     sensors_list.append(Sensor(sensor.to_json()))
-app.debug=False
-app.use_reloader=False
+app.debug = False
+app.use_reloader = False
