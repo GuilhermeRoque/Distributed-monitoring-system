@@ -1,3 +1,5 @@
 pika
 Flask
 Flask-SQLAlchemy
+Adafruit_DHT
+RPi.GPIO

@@ -1,9 +1,10 @@
 import threading
-from ios import IOs
+#from ios import IOs
+from ios_dht11 import IOs_dht11
 
 class Sensor:
     def __init__(self, sensor_dict):
-        self.io = IOs()
+        self.io = IOs_dht11()
         self.max = sensor_dict['max']
         self.min = sensor_dict['min']
         self.type = sensor_dict['type']
@@ -15,7 +16,8 @@ class Sensor:
 
     def read(self):
         self.mutex.acquire(blocking=True)
-        val = self.io.read()
+        #val = self.io.read()
+        val = self.io.read_temperatura()
         self.mutex.release()
         return val
 
