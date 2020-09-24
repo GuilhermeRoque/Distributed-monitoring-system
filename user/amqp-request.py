@@ -55,8 +55,8 @@ if __name__ == '__main__':
     method = None
     usage_message = """
 Usage:
-amqp-request.py -r <sensorID>
-amqp-request.py -c <sensorID> -M <max> -m <min> -t <type> 
+amqp-request.py -i <IP> -r <sensorID>
+amqp-request.py -i <IP> -c <sensorID> -M <max> -m <min> -t <type> 
     """
     try:
         opts, args = getopt.getopt(sys.argv[1:], "r:c:M:m:i:t:",
