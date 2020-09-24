@@ -1,8 +1,10 @@
+import threading
+
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask import abort
 from flask import request
-from sensor import Sensor
+from dht11 import DHT11
 
 sensors_list = []
 app = Flask(__name__)
@@ -15,6 +17,12 @@ def get_sensor(id):
     for s in sensors_list:
         if id == id:
             return s
+
+
+def build_sensor(sensorDAO):
+    sensor_json = sensorDAO.to_json()
+    if sensor_json['type'] == 'DHT11':
+        sensors_list.append(DHT11(sensor_json, pin=4))
 
 
 class SensorDAO(db_conn.Model):
@@ -60,11 +68,13 @@ def sensor():
         response = False
         try:
             sensor_json = request.json
-            sensor = Sensor(sensor_json)
+            sensor = None
+            if sensor_json['type'].upper() == 'DHT11':
+                sensor = DHT11(sensor_json, pin=sensor_json['pin'])
             sensorDAO = SensorDAO(sensor)
             db_conn.session.add(sensorDAO)
             db_conn.session.commit()
-            response = sensor.active()
+            response = sensor.activate()
             sensors_list.append(sensor)
         except:
             abort(400)
@@ -79,7 +89,8 @@ def sensor():
             sensor = get_sensor(sensor_json['id'])
             sensor.max = sensor_json['max']
             sensor.min = sensor_json['min']
-            SensorDAO.query.filter_by(id=sensor_json['id']).update({'max': sensor_json['max'], 'min': sensor_json['min']})
+            SensorDAO.query.filter_by(id=sensor_json['id']).update(
+                {'max': sensor_json['max'], 'min': sensor_json['min']})
             db_conn.session.commit()
         except:
             abort(400)
@@ -108,6 +119,8 @@ def sensor():
 db_conn.create_all()
 sensors = SensorDAO.query.all()
 for sensor in sensors:
-    sensors_list.append(Sensor(sensor.to_json()))
+    build_sensor(sensor)
 app.debug = False
 app.use_reloader = False
+web_t = threading.Thread(target=app.run)
+web_t.start()

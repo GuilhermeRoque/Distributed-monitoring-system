@@ -2,7 +2,7 @@
 import pika
 import threading
 from time import sleep
-from app import *
+from app import SensorDAO, sensors_list, db_conn
 import json
 
 
@@ -23,7 +23,6 @@ class Station:
 
         self.machine_t = threading.Thread(target=self.reading_loop)
         self.comm_t = threading.Thread(target=channel.start_consuming)
-        self.rest_t = threading.Thread(target=app.run)
 
     def __del__(self):
         self.connection.close()
@@ -31,10 +30,6 @@ class Station:
     def run(self):
         self.machine_t.start()
         self.comm_t.start()
-        self.rest_t.start()
-        self.comm_t.join()
-        self.machine_t.join()
-        self.rest_t.join()
 
     def on_request(self, ch, method, props, body):
         request_type, data = (body.decode('ascii')).split('/')
@@ -84,8 +79,7 @@ class Station:
             for sensor in self.sensors:
                 print("Looping reading sensor: ")
                 val = sensor.read()
-                print(val)
-                if val > sensor.max or val < sensor.min:
+                if val['temperature'] > sensor.max or val['temperature'] < sensor.min:
                     self.notify(sensor.id, val)
             sleep(self.interval)
 
@@ -93,3 +87,5 @@ class Station:
 if __name__ == '__main__':
     station = Station()
     station.run()
+    station.comm_t.join()
+    station.machine_t.join()
