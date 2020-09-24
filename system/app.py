@@ -13,7 +13,7 @@ db_conn = SQLAlchemy(app)
 
 def get_sensor(id):
     for s in sensors_list:
-        if id == s.id:
+        if id == id:
             return s
 
 
@@ -76,11 +76,10 @@ def sensor():
         sensor = None
         try:
             sensor_json = request.json
-            id = sensor_json['id']
-            sensor = get_sensor(id)
+            sensor = get_sensor(sensor_json['id'])
             sensor.max = sensor_json['max']
             sensor.min = sensor_json['min']
-            SensorDAO.query.filter_by(id=id).update({'max': sensor_json['max'], 'min': sensor_json['min']})
+            SensorDAO.query.filter_by(id=sensor_json['id']).update({'max': sensor_json['max'], 'min': sensor_json['min']})
             db_conn.session.commit()
         except:
             abort(400)
@@ -92,12 +91,9 @@ def sensor():
         sensor = None
         try:
             sensor_json = request.json
-            id = sensor_json['id']
-            sensor = get_sensor(id)
+            sensor = get_sensor(sensor_json['id'])
             sensors_list.remove(sensor)
-            print('aqui')
-            SensorDAO.query.filter_by(id=id).delete()
-            print('djasoijdio')
+            SensorDAO.query.filter_by(id=sensor_json['id']).delete()
             db_conn.session.commit()
         except:
             abort(400)

@@ -1,10 +1,11 @@
+#! /home/guilherme/PycharmProjects/broker/venv/bin/python
 import pika
+import sys, getopt
 
-
-class User:
-    def __init__(self):
+class AMQPListen:
+    def __init__(self, IP):
         self.broadcast_connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='localhost'))
+            pika.ConnectionParameters(host=IP))
         self.broadcast_channel = self.broadcast_connection.channel()
         self.broadcast_channel.exchange_declare(exchange='logs', exchange_type='fanout')
         result = self.broadcast_channel.queue_declare(queue='', exclusive=True)
@@ -23,5 +24,26 @@ class User:
 
 
 if __name__ == '__main__':
-    user = User()
+    IP = ''
+    usage_message = """
+Usage:
+amqp-listen.py -i <IP>
+    """
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "i:", ["IP ="])
+    except getopt.GetoptError:
+        print(usage_message)
+        sys.exit(2)
+    if not len(opts):
+        print(usage_message)
+        sys.exit(0)
+    for opt, arg in opts:
+        if opt == '-h':
+            print(usage_message)
+            sys.exit()
+        elif opt in ("-i", "--IP"):
+            IP = arg
+
+    user = AMQPListen(IP)
     user.run()
+

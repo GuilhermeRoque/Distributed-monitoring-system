@@ -5,6 +5,7 @@ from time import sleep
 from app import *
 import json
 
+
 class Station:
     def __init__(self):
         self.sensors = sensors_list
@@ -38,39 +39,39 @@ class Station:
     def on_request(self, ch, method, props, body):
         request_type, data = (body.decode('ascii')).split('/')
         data = json.loads(data)
-        sensor = Sensor(data)
-        response = self.handle_request(request_type, sensor)
-        print(response)
+        print(data)
+        print(request_type)
+        response = self.handle_request(request_type, data)
         ch.basic_publish(exchange='',
                          routing_key=props.reply_to,
                          properties=pika.BasicProperties(correlation_id=props.correlation_id),
                          body=str(response))
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
-    def handle_request(self, request_type, sensor):
-        response = ''
-        if request_type == 'PUT':
-            sensor_ref = self.get_sensor(sensor)
-            print(" Updating sensor: " + str(sensor_ref.id))
-            response = sensor_ref.write(sensor)
-        elif request_type == 'POST':
-            print(" Adding sensor: " + str(sensor.id))
-            self.sensors.append(sensor)
-            s = SensorDAO(sensor)
-            db_conn.session.add(s)
-            db_conn.session.commit()
-            response = sensor.active()
-        elif request_type == 'DEL':
-            response = True
-        elif request_type == 'GET':
-            sensor_ref = self.get_sensor(sensor)
-            print("Reading sensor: " + str(sensor_ref.id))
-            response = sensor_ref.read()
+    def handle_request(self, request_type, data):
+        response = 'Error'
+        try:
+            if request_type == 'PUT':
+                sensor = self.get_sensor(data['id'])
+                print(" Updating sensor: " + str(sensor.id))
+                sensor.max = data['max']
+                sensor.min = data['min']
+
+                SensorDAO.query.filter_by(id=data['id']).update({'max': data['max'], 'min': data['min']})
+                db_conn.session.commit()
+                response = 'Success'
+            elif request_type == 'GET':
+                sensor_ref = self.get_sensor(data['id'])
+                print("Reading sensor: " + str(sensor_ref.id))
+                response = 'Value read from ' + data['id'] + ': ' + str(sensor_ref.read())
+
+        except:
+            pass
         return response
 
-    def get_sensor(self, sensor):
+    def get_sensor(self, id):
         for s in self.sensors:
-            if s.id == sensor.id:
+            if s.id == id:
                 return s
 
     def notify(self, sensor_id, val):
