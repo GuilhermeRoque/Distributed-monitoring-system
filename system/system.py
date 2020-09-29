@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import pika
 import threading
-from time import sleep
 from app import SensorDAO, sensors_list, db_conn
 import json
 
@@ -21,14 +20,13 @@ class Station:
             pika.ConnectionParameters(host='localhost'))
         self.broadcast_channel = self.broadcast_connection.channel()
 
-        self.machine_t = threading.Thread(target=self.reading_loop)
         self.comm_t = threading.Thread(target=channel.start_consuming)
 
     def __del__(self):
         self.connection.close()
 
     def run(self):
-        self.machine_t.start()
+        threading.Timer(self.interval, self.reading_loop).start()
         self.comm_t.start()
 
     def on_request(self, ch, method, props, body):
@@ -75,17 +73,15 @@ class Station:
         self.broadcast_channel.basic_publish(exchange='logs', routing_key='', body=message)
 
     def reading_loop(self):
-        while True:
-            for sensor in self.sensors:
-                print("Looping reading sensor: ")
-                val = sensor.read()
-                if val['temperature'] > sensor.max or val['temperature'] < sensor.min:
-                    self.notify(sensor.id, val)
-            sleep(self.interval)
+        for sensor in self.sensors:
+            print("Looping reading sensor: ")
+            val = sensor.read()
+            if val['temperature'] > sensor.max or val['temperature'] < sensor.min:
+                self.notify(sensor.id, val)
+        threading.Timer(self.interval, self.reading_loop).start()
 
 
 if __name__ == '__main__':
     station = Station()
     station.run()
     station.comm_t.join()
-    station.machine_t.join()
