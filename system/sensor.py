@@ -3,7 +3,7 @@ from sensorIO import SensorIO
 
 
 class Sensor(SensorIO):
-    def __init__(self, sensor_dict):
+    def __init__(self, sensor_dict, **kwargs):
         self.max = sensor_dict['max']
         self.min = sensor_dict['min']
         self.type = sensor_dict['type']

@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 import pika
 import threading
-from app import SensorDAO, sensors_list, db_conn
+from webApp import SensorDAO, db_conn
 import json
+from zmqRequest import ZMQRequest
 
 
 class Station:
     def __init__(self):
-        self.sensors = sensors_list
         self.interval = 30
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(host='localhost'))
@@ -28,6 +28,7 @@ class Station:
     def run(self):
         threading.Timer(self.interval, self.reading_loop).start()
         self.comm_t.start()
+        self.comm_t.join()
 
     def on_request(self, ch, method, props, body):
         request_type, data = (body.decode('ascii')).split('/')
@@ -45,27 +46,17 @@ class Station:
         response = 'Error'
         try:
             if request_type == 'PUT':
-                sensor = self.get_sensor(data['id'])
-                print(" Updating sensor: " + str(sensor.id))
-                sensor.max = data['max']
-                sensor.min = data['min']
-
                 SensorDAO.query.filter_by(id=data['id']).update({'max': data['max'], 'min': data['min']})
                 db_conn.session.commit()
-                response = 'Success'
+                response = {'ack': 1}
             elif request_type == 'GET':
-                sensor_ref = self.get_sensor(data['id'])
-                print("Reading sensor: " + str(sensor_ref.id))
-                response = 'Value read from ' + data['id'] + ': ' + str(sensor_ref.read())
-
+                sensorD = SensorDAO.query.filter_by(id=data['id']).first()
+                request_json = sensorD.to_json()
+                request_json['cmd'] = request_type
+                response = ZMQRequest.talk_zmq(request_json)
         except:
             pass
         return response
-
-    def get_sensor(self, id):
-        for s in self.sensors:
-            if s.id == id:
-                return s
 
     def notify(self, sensor_id, val):
         print("Notifying for sensor: " + str(sensor_id) + " val " + str(val))
@@ -73,9 +64,15 @@ class Station:
         self.broadcast_channel.basic_publish(exchange='logs', routing_key='', body=message)
 
     def reading_loop(self):
-        for sensor in self.sensors:
-            print("Looping reading sensor: ")
-            val = sensor.read()
+        sensors = SensorDAO.query.all()
+        print("Looping..")
+        for sensor in sensors:
+            sensor_json = sensor.to_json()
+            print("Reading " + sensor_json['id'])
+            request_json = {'cmd': 'GET'}
+            request_json.update(sensor_json)
+            response = ZMQRequest.talk_zmq(request_json)
+            val = response
             if val['temperature'] > sensor.max or val['temperature'] < sensor.min:
                 self.notify(sensor.id, val)
         threading.Timer(self.interval, self.reading_loop).start()
@@ -84,4 +81,3 @@ class Station:
 if __name__ == '__main__':
     station = Station()
     station.run()
-    station.comm_t.join()

@@ -1,9 +1,9 @@
 #! /home/guilherme/PycharmProjects/broker/venv/bin/python
+import getopt
 import json
-
-import pika
+import sys
 import uuid
-import sys, getopt
+import pika
 
 
 class AMQPRequest:
@@ -56,11 +56,11 @@ if __name__ == '__main__':
     usage_message = """
 Usage:
 amqp-request.py -i <IP> -r <sensorID>
-amqp-request.py -i <IP> -c <sensorID> -M <max> -m <min> -t <type> 
+amqp-request.py -i <IP> -c <sensorID> -M <max> -m <min> -d <datatype> 
     """
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "r:c:M:m:i:t:",
-                                   ["read =", "configure =", "max =", "min =", "IP =", "Type ="])
+        opts, args = getopt.getopt(sys.argv[1:], "r:c:M:m:i:d:",
+                                   ["read =", "configure =", "max =", "min =", "IP =", "datatype ="])
     except getopt.GetoptError as error:
         print(error)
         print(usage_message)
@@ -75,7 +75,7 @@ amqp-request.py -i <IP> -c <sensorID> -M <max> -m <min> -t <type>
     elif ('-c' in sys.argv[1:] or '--configure' in sys.argv[1:]) and \
             (('-M' in sys.argv[1:] or '--max' in sys.argv[1:]) and
              ('-m' in sys.argv[1:] or '--min' in sys.argv[1:]) and
-             ('-t' in sys.argv[1:] or '--type' in sys.argv[1:])):
+             ('-d' in sys.argv[1:] or '--datatype' in sys.argv[1:])):
         for opt, arg in opts:
             if opt in ('-c', '--configure'):
                 id = arg
@@ -83,7 +83,7 @@ amqp-request.py -i <IP> -c <sensorID> -M <max> -m <min> -t <type>
                 min = arg
             elif opt in ('-M', '--max'):
                 max = arg
-            elif opt in ('-t', '--type'):
+            elif opt in ('-d', '--datatype'):
                 type = arg
             elif opt in ("-i", "--IP"):
                 IP = arg
