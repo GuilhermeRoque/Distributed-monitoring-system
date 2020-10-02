@@ -9,15 +9,17 @@ from zmqRequest import ZMQRequest
 class Station:
     def __init__(self):
         self.interval = 30
+        credentials = pika.PlainCredentials('anderson.gm05', 'uL3tD8wV7lJ7nV2q')
         self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='localhost'))
+            pika.ConnectionParameters(host='rabbitmq.sj.ifsc.edu.br', virtual_host='290pji06', credentials=credentials))
+
         channel = self.connection.channel()
         channel.queue_declare(queue='rpc_queue')
         channel.basic_qos(prefetch_count=1)
         channel.basic_consume(queue='rpc_queue', on_message_callback=self.on_request)
 
         self.broadcast_connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host='localhost'))
+            pika.ConnectionParameters(host='rabbitmq.sj.ifsc.edu.br', virtual_host='290pji06', credentials=credentials))
         self.broadcast_channel = self.broadcast_connection.channel()
 
         self.comm_t = threading.Thread(target=channel.start_consuming)

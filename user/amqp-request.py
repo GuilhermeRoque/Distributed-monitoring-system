@@ -8,8 +8,11 @@ import pika
 
 class AMQPRequest:
     def __init__(self, IP, method, id, max=None, min=None, type=None):
+
+
+        credentials = pika.PlainCredentials('anderson.gm05', 'uL3tD8wV7lJ7nV2q')
         self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host=IP))
+            pika.ConnectionParameters(host=IP, virtual_host='290pji06', credentials=credentials))
 
         self.channel = self.connection.channel()
         result = self.channel.queue_declare(queue='', exclusive=True)
