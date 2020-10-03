@@ -48,7 +48,9 @@ class Station:
         response = 'Error'
         try:
             if request_type == 'PUT':
-                SensorDAO.query.filter_by(id=data['id']).update({'max': data['max'], 'min': data['min']})
+                SensorDAO.query.filter_by(id=data['id']).update({'max': data['max'],
+                                                                 'min': data['min'],
+                                                                 'data_type': data['data_type']})
                 db_conn.session.commit()
                 response = {'ack': 1}
             elif request_type == 'GET':
@@ -75,7 +77,8 @@ class Station:
             request_json.update(sensor_json)
             response = ZMQRequest.talk_zmq(request_json)
             val = response
-            if val['temperature'] > sensor.max or val['temperature'] < sensor.min:
+            print(response)
+            if val[sensor.data_type] > sensor.max or val[sensor.data_type] < sensor.min:
                 self.notify(sensor.id, val)
         threading.Timer(self.interval, self.reading_loop).start()
 

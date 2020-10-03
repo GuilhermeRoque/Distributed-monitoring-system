@@ -16,9 +16,9 @@ class SensorDriver:
         while True:
             json_msg = socket.recv_json()
             cmd = json_msg.pop('cmd')
-            type = json_msg['type']
+            model = json_msg['model']
             sensor = None
-            if type == 'DHT11':
+            if model == 'DHT11':
                 sensor = DHT11(json_msg, pin=json_msg['type_specific']['pin'])
             if cmd == 'GET':
                 response = sensor.read()

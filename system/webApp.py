@@ -16,23 +16,26 @@ class SensorDAO(db_conn.Model):
     id = db_conn.Column(db_conn.String(40), primary_key=True)
     max = db_conn.Column(db_conn.Integer, index=True)
     min = db_conn.Column(db_conn.Integer, index=True)
-    type = db_conn.Column(db_conn.String(40), index=True)
+    data_type = db_conn.Column(db_conn.String(40), index=True)
     type_specific = db_conn.Column(db_conn.String(40), index=True)
+    model = db_conn.Column(db_conn.String(40), index=True)
 
     def __init__(self, sensor_json, type_specific=None):
         super().__init__(id=sensor_json['id'], max=sensor_json['max'], min=sensor_json['min'],
-                         type=sensor_json['type'], type_specific=json.dumps(type_specific))
+                         model=sensor_json['model'], data_type=sensor_json['data_type'],
+                         type_specific=json.dumps(type_specific))
         self.max = sensor_json['max']
         self.min = sensor_json['min']
-        self.type = sensor_json['type']
+        self.data_type = sensor_json['data_type']
+        self.model = sensor_json['model']
         self.type_specific = json.dumps(type_specific)
 
     def __repr__(self):
         return '<Sensor {}>'.format(self.id)
 
     def to_json(self):
-        return {'id': self.id, 'max': self.max, 'min': self.min,
-                'type': self.type, 'type_specific': json.loads(self.type_specific)}
+        return {'id': self.id, 'max': self.max, 'min': self.min, 'model': self.model,
+                'data_type': self.data_type, 'type_specific': json.loads(self.type_specific)}
 
 
 @app.route('/sensor', methods=['GET', 'POST', 'DELETE', 'PUT'])
@@ -58,7 +61,7 @@ def sensor():
         try:
             request_json = request.json
             request_json['cmd'] = request.method
-            # {'sensor':1, 'type_specific': {'pin': 1}}
+            # {'sensor':1,'data_type: 'temperature', 'type_specific': {'pin': 1}}
             type_specific = request_json.pop('type_specific')
             sensorD = SensorDAO(request_json, type_specific)
             db_conn.session.add(sensorD)
@@ -74,30 +77,25 @@ def sensor():
         else:
             return '', 202
     elif request.method == 'PUT':
-        sensor = None
         try:
             sensor_json = request.json
             SensorDAO.query.filter_by(id=sensor_json['id']).update(
-                {'max': sensor_json['max'], 'min': sensor_json['min']})
+                {'max': sensor_json['max'], 'min': sensor_json['min'],
+                 'data_type': sensor_json['data_type']})
             db_conn.session.commit()
-        except:
+        except Exception as e:
+            print(e)
             abort(400)
-        if sensor is None:
-            abort(404)
-        else:
-            return '', 200
+        return '', 200
     elif request.method == 'DELETE':
-        sensor = None
         try:
             sensor_json = request.json
             SensorDAO.query.filter_by(id=sensor_json['id']).delete()
             db_conn.session.commit()
-        except:
+        except Exception as e:
+            print(e)
             abort(400)
-        if sensor is None:
-            abort(404)
-        else:
-            return '', 200
+        return '', 200
     else:
         abort(400)
 

@@ -1,13 +1,14 @@
 #! /home/guilherme/PycharmProjects/broker/venv/bin/python
+import getopt
+import sys
 import pika
-import sys, getopt
 
 
 class AMQPListen:
     def __init__(self, IP):
         credentials = pika.PlainCredentials('anderson.gm05', 'uL3tD8wV7lJ7nV2q')
         self.broadcast_connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host=IP, virtual_host='290pji06',credentials=credentials))
+            pika.ConnectionParameters(host=IP, virtual_host='290pji06', credentials=credentials))
         self.broadcast_channel = self.broadcast_connection.channel()
         self.broadcast_channel.exchange_declare(exchange='logs', exchange_type='fanout')
         result = self.broadcast_channel.queue_declare(queue='', exclusive=True)
