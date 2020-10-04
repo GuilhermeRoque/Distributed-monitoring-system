@@ -1,3 +1,5 @@
+#! /home/guilherme/PycharmProjects/PJ2/venv/bin/python
+
 import json
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy

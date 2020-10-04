@@ -1,0 +1,6 @@
+[Unit]
+Description=Sensor Driver Service
+
+[Service]
+ExecStart=/home/guilherme/PycharmProjects/PJ2/system/driver.py
+Restart=always

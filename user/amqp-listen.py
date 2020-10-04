@@ -1,4 +1,4 @@
-#! /home/guilherme/PycharmProjects/broker/venv/bin/python
+#! /home/guilherme/PycharmProjects/PJ2/venv/bin/python
 import getopt
 import sys
 import pika

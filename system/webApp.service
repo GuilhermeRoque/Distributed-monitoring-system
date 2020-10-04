@@ -1,0 +1,9 @@
+[Unit]
+Description=Web Interface
+After=network.target sensorDriver.service
+Requires=network.target sensorDriver.service
+Documentation= https://wiki.sj.ifsc.edu.br/index.php/Guilherme_Anderson-PJI2-2020-1
+
+[Service]
+ExecStart=/home/guilherme/PycharmProjects/PJ2/system/webApp.py
+Restart=always

@@ -1,10 +1,11 @@
-#!/usr/bin/env python
+#! /home/guilherme/PycharmProjects/PJ2/venv/bin/python
 import pika
 import threading
 from webApp import SensorDAO, db_conn
 import json
 from zmqRequest import ZMQRequest
-
+import logging
+logging.basicConfig(level=logging.INFO)
 
 class Station:
     def __init__(self):
@@ -33,10 +34,10 @@ class Station:
         self.comm_t.join()
 
     def on_request(self, ch, method, props, body):
-        request_type, data = (body.decode('ascii')).split('/')
+        body_str = body.decode('ascii')
+        logging.info("Received request: " + body_str)
+        request_type, data = body_str.split('/')
         data = json.loads(data)
-        print(data)
-        print(request_type)
         response = self.handle_request(request_type, data)
         ch.basic_publish(exchange='',
                          routing_key=props.reply_to,
@@ -63,26 +64,27 @@ class Station:
         return response
 
     def notify(self, sensor_id, val):
-        print("Notifying for sensor: " + str(sensor_id) + " val " + str(val))
+        logging.debug("Notifying for sensor: " + str(sensor_id) + " val " + str(val))
         message = str(sensor_id) + ":" + str(val)
         self.broadcast_channel.basic_publish(exchange='logs', routing_key='', body=message)
 
     def reading_loop(self):
         sensors = SensorDAO.query.all()
-        print("Looping..")
+        logging.info("Looping..")
         for sensor in sensors:
             sensor_json = sensor.to_json()
-            print("Reading " + sensor_json['id'])
+            logging.info("Reading " + sensor_json['id'])
             request_json = {'cmd': 'GET'}
             request_json.update(sensor_json)
             response = ZMQRequest.talk_zmq(request_json)
             val = response
-            print(response)
+            logging.info(response)
             if val[sensor.data_type] > sensor.max or val[sensor.data_type] < sensor.min:
                 self.notify(sensor.id, val)
         threading.Timer(self.interval, self.reading_loop).start()
 
 
 if __name__ == '__main__':
+    db_conn.create_all()
     station = Station()
     station.run()

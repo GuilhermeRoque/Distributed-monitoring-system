@@ -1,10 +1,9 @@
-#! /home/guilherme/PycharmProjects/broker/venv/bin/python
+#! /home/guilherme/PycharmProjects/PJ2/venv/bin/python
 import getopt
 import json
 import sys
 import uuid
 import pika
-
 
 class AMQPRequest:
     def __init__(self, IP, method, id, max=None, min=None, type=None):
