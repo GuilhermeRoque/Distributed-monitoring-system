@@ -1,7 +1,7 @@
 #! /home/guilherme/PycharmProjects/PJ2/venv/bin/python
 
 import zmq
-from driver.dht11 import DHT11
+from dht11 import DHT11
 
 context = zmq.Context()
 HOST = "*"

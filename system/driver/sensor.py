@@ -1,4 +1,4 @@
-from driver.sensorIO import SensorIO
+from sensorIO import SensorIO
 
 
 class Sensor(SensorIO):

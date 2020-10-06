@@ -6,6 +6,9 @@
       <sourceFolder url="file://$MODULE_DIR$/system" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/db" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/user" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/system/driver" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/system/interface" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/system/service" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
     <orderEntry type="inheritedJdk" />
