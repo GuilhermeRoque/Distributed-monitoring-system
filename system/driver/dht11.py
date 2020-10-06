@@ -1,7 +1,7 @@
 # import Adafruit_DHT
 # import RPi.GPIO as GPIO
 # GPIO.setmode(GPIO.BOARD)
-from sensor import Sensor
+from driver.sensor import Sensor
 from random import randint
 
 
