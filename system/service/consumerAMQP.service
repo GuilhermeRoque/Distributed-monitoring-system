@@ -1,8 +1,9 @@
 [Unit]
-Description=Web Interface
+Description=AMQP Consumer
 After=network.target sensorDriver.service
 Requires=network.target sensorDriver.service
 Documentation= https://wiki.sj.ifsc.edu.br/index.php/Guilherme_Anderson-PJI2-2020-1
 
 [Service]
+Environment=PYTHONUNBUFFERED=1
 Restart=on-failure

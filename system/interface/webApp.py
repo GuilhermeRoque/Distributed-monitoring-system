@@ -1,4 +1,4 @@
-#! /home/guilherme/PycharmProjects/PJ2/venv/bin/python
+#!/usr/bin/python3
 
 import json
 from flask import Flask, jsonify

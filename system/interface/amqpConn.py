@@ -1,5 +1,4 @@
 import logging
-
 import pika
 
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '

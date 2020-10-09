@@ -1,5 +1,4 @@
-#! /home/guilherme/PycharmProjects/PJ2/venv/bin/python
-
+#!/usr/bin/python3
 import zmq
 from dht11 import DHT11
 

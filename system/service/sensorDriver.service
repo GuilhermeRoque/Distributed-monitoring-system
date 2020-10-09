@@ -1,6 +1,6 @@
 [Unit]
 Description=Sensor Driver Service
+Documentation= https://wiki.sj.ifsc.edu.br/index.php/Guilherme_Anderson-PJI2-2020-1
 
 [Service]
-ExecStart=/home/guilherme/PycharmProjects/PJ2/system/driver.py
-Restart=always
+Restart=on-failure

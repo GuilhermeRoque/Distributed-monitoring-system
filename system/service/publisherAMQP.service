@@ -1,10 +1,9 @@
 [Unit]
-Description=AMQP Interface
+Description=AMQP Publisher
 After=network.target sensorDriver.service
 Requires=network.target sensorDriver.service
 Documentation= https://wiki.sj.ifsc.edu.br/index.php/Guilherme_Anderson-PJI2-2020-1
 
 [Service]
 Environment=PYTHONUNBUFFERED=1
-ExecStart=/home/guilherme/PycharmProjects/PJ2/system/amqpApp.py
-Restart=always
+Restart=on-failure
