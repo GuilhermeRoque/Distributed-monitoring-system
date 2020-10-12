@@ -29,11 +29,11 @@ sudo chmod +x $BIN/mainWeb.py
 printf "\nCopying service files...\n"
 sudo cp service/* $SERV/
 printf "\nAdding ExecStart's...\n"
-printf "\nExecStart=$BIN/mainDriver.py\n" >> $SERV/sensorDriver.service
-printf "\nExecStart=$BIN/mainWeb.py\n" >> $SERV/webApp.service
-printf "\nExecStart=$BIN/mainConsumerAMQP.py\n" >> $SERV/consumerAMQP.service
-printf "\nExecStart=$BIN/mainPublisherAMQP.py\n" >> $SERV/publisherAMQP.service
-printf "\nAdding database folder '$DATA/'...\n"
+sudo printf "\nExecStart=$BIN/mainDriver.py\n" >> $SERV/sensorDriver.service
+sudo printf "\nExecStart=$BIN/mainWeb.py\n" >> $SERV/webApp.service
+sudo printf "\nExecStart=$BIN/mainConsumerAMQP.py\n" >> $SERV/consumerAMQP.service
+sudo printf "\nExecStart=$BIN/mainPublisherAMQP.py\n" >> $SERV/publisherAMQP.service
+sudo printf "\nAdding database folder '$DATA/'...\n"
 sudo mkdir $DATA
 #printf "\nAdding permission to services start in system booting...\n"
 #sudo systemctl enable sensorDriver.service
