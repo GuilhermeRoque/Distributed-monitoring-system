@@ -7,11 +7,20 @@ DATA=/var/lib/station
 printf "\nInstalling dependencies into '$LIB/'...\n"
 sudo pip3 install --target $LIB -r requirements.txt
 printf "\nCopying lib's to '$LIB/'...\n"
-sudo cp -r  driver/lib/* $LIB/
-sudo cp -r interface/lib/* $LIB/
+sudo cp  driver/dht11.py $LIB/
+sudo cp  driver/driver.py $LIB/
+sudo cp  driver/sensor.py $LIB/
+sudo cp  driver/sensorIO.py $LIB/
+sudo cp  interface/amqpConn.py $LIB/
+sudo cp  interface/consumerAMQP.py $LIB/
+sudo cp  interface/flaskApp.py $LIB/
+sudo cp  interface/publisherAMQP.py $LIB/
+sudo cp  interface/zmqRequest.py $LIB/
 printf "\nCopying main's to '$BIN/'...\n"
-sudo cp -r  driver/bin/* $BIN/
-sudo cp -r interface/bin/* $BIN/
+sudo cp -r  driver/mainDriver.py $BIN/
+sudo cp -r interface/mainWeb.py $BIN/
+sudo cp -r interface/mainPublisherAMQP.py $BIN/
+sudo cp -r interface/mainConsumerAMQP.py $BIN/
 printf "\nAdding main's permissions...\n"
 sudo chmod +x $BIN/mainDriver.py
 sudo chmod +x $BIN/mainPublisherAMQP.py
