@@ -36,7 +36,7 @@ sudo printf "\nExecStart=$BIN/mainPublisherAMQP.py\n" >> $SERV/publisherAMQP.ser
 sudo printf "\nAdding database folder '$DATA/'...\n"
 sudo mkdir $DATA
 #printf "\nAdding permission to services start in system booting...\n"
-#sudo systemctl enable sensorDriver.service
-#sudo systemctl enable webApp.service
-#sudo systemctl enable consumerAMQP.service
-#sudo systemctl enable publisherAMQP.service
+sudo systemctl enable sensorDriver.service
+sudo systemctl enable webApp.service
+sudo systemctl enable consumerAMQP.service
+sudo systemctl enable publisherAMQP.service

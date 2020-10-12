@@ -2,5 +2,5 @@ pika
 Flask
 Flask-SQLAlchemy
 zmq
-#Adafruit_DHT
-#RPi.GPIO
+Adafruit_DHT
+RPi.GPIO
