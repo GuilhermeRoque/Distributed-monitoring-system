@@ -61,3 +61,6 @@ class Consumer(AMQPConnection):
         except Exception as e:
             print(e)
         return response
+
+    def start_working(self):
+        pass
