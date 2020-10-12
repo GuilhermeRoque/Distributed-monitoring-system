@@ -3,12 +3,17 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/broker" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/system" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/station" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/db" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/user" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/system/driver" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/system/interface" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/system/service" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/station/driver" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/station/interface" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/station/service" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/station/driver/bin" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/station/driver/lib" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/station/interface/lib" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/station/interface/bin" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/user/bin" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
     <orderEntry type="inheritedJdk" />
