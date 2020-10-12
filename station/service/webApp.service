@@ -10,3 +10,4 @@ WantedBy=multi-user.target
 [Service]
 Environment=PYTHONUNBUFFERED=1
 Restart=on-failure
+ExecStart=/usr/sbin/mainWeb.py

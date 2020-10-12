@@ -5,6 +5,6 @@ BIN=/usr/local/bin/
 printf "Installing dependencies into '$SRC'...\n"
 sudo pip3 install --target $SRC -r requirements.txt
 printf "Installing project into '$SRC'...\n"
-sudo cp * "$BIN"
+sudo cp commands/* "$BIN"
 sudo  chmod +x "$BIN"amqp-listen.py
 sudo  chmod +x "$BIN"amqp-request.py
