@@ -5,6 +5,7 @@ import sys
 import uuid
 import pika
 
+
 class AMQPRequest:
     def __init__(self, IP, method, id, max=None, min=None, type=None):
 
