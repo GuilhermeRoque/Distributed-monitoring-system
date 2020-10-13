@@ -35,3 +35,8 @@ sudo systemctl enable sensorDriver.service
 sudo systemctl enable webApp.service
 sudo systemctl enable consumerAMQP.service
 sudo systemctl enable publisherAMQP.service
+printf "\Starting services...\n"
+sudo systemctl start sensorDriver.service
+sudo systemctl start webApp.service
+sudo systemctl start consumerAMQP.service
+sudo systemctl start publisherAMQP.service
