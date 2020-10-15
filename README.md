@@ -23,6 +23,8 @@
 * curl --header "Content-Type: application/json" --request GET --data '{"id":"sensor1"}' localhost:5000/sensor
 * curl --header "Content-Type: application/json" --request DELETE --data '{"id":"sensor2"}' localhost:5000/sensor
 
+## Documentação API-REST
+[API-REST](API-REST.md)
 
 ## Página Projeto:
 
