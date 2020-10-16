@@ -8,7 +8,7 @@ Endpoint: **`/sensor`**
 #### GET /sensor/{id}
 
 Retorna informações do sensor{id} informado
-Retorna os dados dos comentários em formato `application/json`.
+Retorna os dados do sensor em formato `application/json`.
 
 * **Requisitos:**
 
@@ -18,6 +18,7 @@ Retorna os dados dos comentários em formato `application/json`.
 
 * **Código de resposta de sucesso:**`200 OK`
 
+Sem corpo de resposta.
   Comentários relacionados à tarefa informada encontrados
 
 * **Corpo da resposta:**
@@ -31,7 +32,7 @@ Retorna os dados dos comentários em formato `application/json`.
   ```
 * **Código de resposta de sucesso:**`404 NOT FOUND`
 
-  1. Nenhum comentário encontrado.
+  1. Nenhum sensor encontrado.
   * **Corpo da resposta:**
 
     ```json
@@ -42,8 +43,8 @@ Retorna os dados dos comentários em formato `application/json`.
 
 #### POST /sensor
 Executa o cadastro de uma novo sensor. 
-O corpo da requisição contém todos os parâmetros do comentário em formato `application/json`. 
-Retorna os dados do comentário em `json` caso seja criado com sucesso.
+O corpo da requisição contém todos os parâmetros do sensor em formato `application/json`. 
+Sem corpo de resposta.
 
 * **Requisitos:**
 
@@ -55,7 +56,7 @@ Retorna os dados do comentário em `json` caso seja criado com sucesso.
 
   ```json
   {
-      "id: "sensor1",
+      "id": "sensor1",
       "max": "24",
       "min": "20",
       "model": "DHT11",
@@ -70,7 +71,7 @@ Retorna os dados do comentário em `json` caso seja criado com sucesso.
 
 * **Código de resposta de erro:**`404 NOT FOUND`
 
-  A tarefa não informada não foi encontrada
+Sensor não criado.
 
 * **Corpo da resposta:**
   ```json
@@ -93,7 +94,7 @@ Retorna os dados do comentário em `json` caso seja criado com sucesso.
 #### PUT /sensor
 
 Executa a atualização dos dados de um sensor. 
-O corpo da requisição contém todos os atributos do comentário que serão alterados em formato `application/json`.
+O corpo da requisição contém todos os atributos do sensor que serão alterados em formato `application/json`.
 
 * **Requisitos:**
 
@@ -142,7 +143,7 @@ O corpo da requisição contém todos os atributos do comentário que serão alt
 
 
 Executa a exclusão do sensor informado(`id`)
-O corpo da requisição contém todos os atributos do comentário que serão alterados em formato `application/json`.
+O corpo da requisição contém todos os atributos do sensor que serão alterados em formato `application/json`.
 
 * **Requisitos:**
 
