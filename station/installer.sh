@@ -11,6 +11,7 @@ sudo cp  driver/dht11.py $LIB/
 sudo cp  driver/driver.py $LIB/
 sudo cp  driver/sensor.py $LIB/
 sudo cp  driver/sensorIO.py $LIB/
+sudo cp  driver/bmp280.py $LIB/
 sudo cp  interface/amqpConn.py $LIB/
 sudo cp  interface/consumerAMQP.py $LIB/
 sudo cp  interface/flaskApp.py $LIB/

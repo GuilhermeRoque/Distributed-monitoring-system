@@ -1,4 +1,5 @@
 import zmq
+from bmp280 import BMP280
 from dht11 import DHT11
 
 context = zmq.Context()
@@ -20,6 +21,8 @@ class SensorDriver:
             sensor = None
             if model == 'DHT11':
                 sensor = DHT11(json_msg, pin=json_msg['type_specific']['pin'])
+            if model == 'BMP280':
+                sensor = BMP280(json_msg)
             if cmd == 'GET':
                 response = sensor.read()
                 socket.send_json(response)
