@@ -24,7 +24,7 @@ class AMQPRequest:
         if method == 'GET':
             self.request = {"id": id}
         else:
-            self.request = {"id": id, "max": int(max), "min": int(min), "type": type}
+            self.request = {"id": id, "max": int(max), "min": int(min), "data_type": type}
         self.request = method + '/' + json.dumps(self.request)
         print(self.request)
 
